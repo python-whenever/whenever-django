@@ -22,8 +22,8 @@ class WheneverTimeField(WheneverField):
             value = _stdlib.time.fromisoformat(str(value))
         return _whenever.Time(value)
 
-    def _to_db(self, value: _whenever.Time) -> str:
-        return value.to_stdlib().isoformat()
+    def _to_db(self, value: _whenever.Time) -> _stdlib.time:
+        return value.to_stdlib()
 
     def _parse(self, value: str) -> _whenever.Time:
         return _whenever.Time.parse_iso(value)

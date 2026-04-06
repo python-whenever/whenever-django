@@ -26,7 +26,7 @@ class _WheneverFormField(forms.CharField):
             return self.whenever_type.parse_iso(str(value))
         except (ValueError, TypeError) as e:
             raise ValidationError(
-                f"Enter a valid ISO 8601 {self.type_label}: {e}"
+                f"Enter a valid ISO 8601 {self.type_label}."
             ) from e
 
     def prepare_value(self, value: Any) -> str:

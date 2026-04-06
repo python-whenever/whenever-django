@@ -77,3 +77,6 @@ class CompositeFieldDescriptor:
             # from_db_value runs, so we must accept non-whenever types here
             instance.__dict__[self.attname] = value
             instance.__dict__.pop(cache_key, None)
+
+
+__all__ = ["CompositeFieldDescriptor"]

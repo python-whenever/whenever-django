@@ -6,9 +6,11 @@ from django.db.models import Transform
 
 from whenever_django.fields import (
     InstantField,
+    OffsetDateTimeField,
     PlainDateTimeField,
     WheneverDateField,
     WheneverTimeField,
+    ZonedDateTimeField,
 )
 
 
@@ -51,7 +53,14 @@ def register_lookups() -> None:
     because Django's query compilation calls get_prep_value() on the field.
     We only need to register custom transforms that extract sub-components.
     """
-    InstantField.register_lookup(DateTransform)
-    InstantField.register_lookup(TimeTransform)
-    PlainDateTimeField.register_lookup(DateTransform)
-    PlainDateTimeField.register_lookup(TimeTransform)
+    for field_cls in (
+        InstantField,
+        PlainDateTimeField,
+        ZonedDateTimeField,
+        OffsetDateTimeField,
+    ):
+        field_cls.register_lookup(DateTransform)
+        field_cls.register_lookup(TimeTransform)
+
+
+__all__ = ["DateTransform", "TimeTransform", "register_lookups"]

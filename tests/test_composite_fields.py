@@ -8,8 +8,8 @@ import whenever
 from django.db import connection, models
 
 from whenever_django.fields import (
-    ZonedDateTimeField,
     OffsetDateTimeField,
+    ZonedDateTimeField,
 )
 
 UTC = stdlib_dt.timezone.utc

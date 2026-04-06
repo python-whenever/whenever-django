@@ -32,7 +32,7 @@ class _WheneverSerializerField(serializers.Field):
             return self.whenever_type.parse_iso(data)
         except (ValueError, TypeError) as exc:
             raise serializers.ValidationError(
-                f"Invalid {self.whenever_type.__name__}: {exc}"
+                f"Invalid ISO 8601 {self.whenever_type.__name__} format."
             ) from exc
 
 

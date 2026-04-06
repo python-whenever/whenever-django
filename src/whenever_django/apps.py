@@ -12,9 +12,9 @@ class WheneverDjangoConfig(AppConfig):
 
         register_lookups()
 
-        from ._compat import HAS_REST_FRAMEWORK
+        try:
+            from .contrib.drf.fields import register_field_mapping
 
-        if HAS_REST_FRAMEWORK:
-            from .contrib.drf import register_serializer_fields
-
-            register_serializer_fields()
+            register_field_mapping()
+        except ImportError:
+            pass

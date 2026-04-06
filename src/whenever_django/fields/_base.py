@@ -87,6 +87,25 @@ class WheneverField(models.Field, abc.ABC):
             f"Set from_stdlib=True to enable automatic coercion."
         )
 
+    def get_db_prep_value(
+        self, value: Any, connection: Any, prepared: bool = False
+    ) -> Any:
+        if not prepared:
+            value = self.get_prep_value(value)
+        if value is None:
+            return value
+        # Our fields declare get_internal_type() but inherit from
+        # models.Field, not the concrete Django field classes. We must
+        # call the backend adapters that those classes normally provide.
+        internal_type = self.get_internal_type()
+        if internal_type == "DateTimeField":
+            return connection.ops.adapt_datetimefield_value(value)
+        if internal_type == "DateField":
+            return connection.ops.adapt_datefield_value(value)
+        if internal_type == "TimeField":
+            return connection.ops.adapt_timefield_value(value)
+        return value
+
     def value_to_string(self, obj: Any) -> str:
         value = self.value_from_object(obj)
         if value is None:

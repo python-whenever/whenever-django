@@ -42,9 +42,7 @@ dev = [
     "pytest-django>=4.5",
     "mypy>=1.0",
     "types-setuptools",
-    "black>=23.0",
-    "isort>=5.0",
-    "flake8>=5.0",
+    "ruff>=0.4",
     "build>=0.10",
     "twine>=4.0",
 ]
@@ -61,20 +59,6 @@ find = {where = ["src"]}
 [tool.setuptools.package-data]
 whenever_django = ["py.typed"]
 
-[tool.black]
-line-length = 88
-target-version = ["py310"]
-
-[tool.isort]
-profile = "black"
-line_length = 88
-skip_gitignore = true
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = "test_*.py"
-addopts = "-v --strict-markers"
-
 [tool.mypy]
 python_version = "3.10"
 warn_return_any = true
@@ -90,13 +74,14 @@ disable_error_code = ["no-untyped-def"]
 target-version = "py310"
 
 [tool.ruff.lint]
-select = ["E4", "E7", "E9", "F"]
-ignore = []
-
+select = ["E4", "E7", "E9", "F", "I", "UP", "B", "SIM"]
+ignore = ["SIM102"]
 fixable = ["ALL"]
 unfixable = []
-
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/test_drf.py" = ["E402"]
 
 [tool.ruff.format]
 quote-style = "double"

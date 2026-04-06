@@ -10,3 +10,6 @@ class WheneverNow(Func):  # type: ignore[misc]
 
     template = "CURRENT_TIMESTAMP"
     output_field = InstantField()
+
+
+__all__ = ["WheneverNow"]

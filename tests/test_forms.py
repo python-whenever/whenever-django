@@ -32,7 +32,6 @@ from whenever_django.forms import (
     ZonedDateTimeFormField,
 )
 
-
 # ---------------------------------------------------------------------------
 # Parametrized test data: (form_field_cls, model_field_cls, valid_iso, whenever_type, factory)
 # ---------------------------------------------------------------------------
