@@ -279,5 +279,9 @@ class TestFromStdlibValidation:
             whenever_type = whenever.Instant
             stdlib_type = None
 
+            def _from_db(self, value, connection): ...
+            def _to_db(self, value): ...
+            def _parse(self, value): ...
+
         with pytest.raises(TypeError, match="does not support from_stdlib"):
             NoStdlibField(from_stdlib=True)

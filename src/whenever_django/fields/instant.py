@@ -26,7 +26,9 @@ class InstantField(WheneverField):
     def _from_db(self, value: Any, connection: Any) -> _whenever.Instant:
         if not isinstance(value, _stdlib.datetime):
             value = _stdlib.datetime.fromisoformat(str(value))
-        # SQLite and some backends drop tzinfo — restore UTC
+        # Instant stores UTC by contract. SQLite and some backends return
+        # naive datetimes — restoring UTC is safe because the column only
+        # ever contains UTC values.
         if value.tzinfo is None:
             value = value.replace(tzinfo=_UTC)
         return _whenever.Instant(value)

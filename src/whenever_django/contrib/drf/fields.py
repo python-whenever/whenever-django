@@ -24,6 +24,10 @@ class _WheneverSerializerField(serializers.Field):
     def to_internal_value(self, data: Any) -> Any:
         if isinstance(data, self.whenever_type):
             return data
+        if not isinstance(data, str):
+            raise serializers.ValidationError(
+                f"Expected a string, got {type(data).__name__}."
+            )
         try:
             return self.whenever_type.parse_iso(data)
         except (ValueError, TypeError) as exc:

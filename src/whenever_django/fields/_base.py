@@ -1,17 +1,18 @@
 from __future__ import annotations
 
+import abc
 from typing import Any
 
 from django.core.exceptions import ValidationError
 from django.db import models
 
 
-class WheneverField(models.Field):
+class WheneverField(models.Field, abc.ABC):
     """Base class for all whenever model fields.
 
     Subclasses must define:
       - whenever_type: the whenever class (e.g., whenever.Instant)
-      - stdlib_type: the corresponding stdlib class (e.g., datetime.datetime)
+      - stdlib_type: the corresponding stdlib class, or None if no equivalent
       - _from_db(value, connection): convert DB value to whenever type
       - _to_db(value): convert whenever type to DB-storable value
       - _parse(value): parse a string/form value into the whenever type
@@ -58,7 +59,13 @@ class WheneverField(models.Field):
                     f"Invalid value for {self.__class__.__name__}: {e}"
                 ) from e
         if self.stdlib_type and isinstance(value, self.stdlib_type):
-            return self.whenever_type(value)
+            try:
+                return self.whenever_type(value)
+            except (ValueError, TypeError) as e:
+                raise ValidationError(
+                    f"Cannot convert {self.stdlib_type.__name__} to "
+                    f"{self.whenever_type.__name__}: {e}"
+                ) from e
         raise ValidationError(
             f"Cannot convert {type(value).__name__} to "
             f"{self.whenever_type.__name__}."
@@ -73,26 +80,26 @@ class WheneverField(models.Field):
             value, self.stdlib_type
         ):
             return self._to_db(self.whenever_type(value))
-        if not isinstance(value, self.whenever_type):
-            raise TypeError(
-                f"{self.__class__.__name__} expects "
-                f"{self.whenever_type.__name__}, "
-                f"got {type(value).__name__}. "
-                f"Set from_stdlib=True to enable automatic coercion."
-            )
-        return self._to_db(value)
+        raise TypeError(
+            f"{self.__class__.__name__} expects "
+            f"{self.whenever_type.__name__}, "
+            f"got {type(value).__name__}. "
+            f"Set from_stdlib=True to enable automatic coercion."
+        )
 
     def value_to_string(self, obj: Any) -> str:
         value = self.value_from_object(obj)
         if value is None:
             return ""
+        if not isinstance(value, self.whenever_type):
+            value = self.to_python(value)
         return str(self._to_db(value))
 
-    def _from_db(self, value: Any, connection: Any) -> Any:
-        raise NotImplementedError
+    @abc.abstractmethod
+    def _from_db(self, value: Any, connection: Any) -> Any: ...
 
-    def _to_db(self, value: Any) -> Any:
-        raise NotImplementedError
+    @abc.abstractmethod
+    def _to_db(self, value: Any) -> Any: ...
 
-    def _parse(self, value: str) -> Any:
-        raise NotImplementedError
+    @abc.abstractmethod
+    def _parse(self, value: str) -> Any: ...

@@ -95,6 +95,8 @@ class OffsetDateTimeField(WheneverField):
     ) -> _stdlib.datetime:
         if not isinstance(value, _stdlib.datetime):
             value = _stdlib.datetime.fromisoformat(str(value))
+        # The column stores UTC. SQLite and some backends return naive
+        # datetimes — restoring UTC is safe because only UTC is ever stored.
         if value.tzinfo is None:
             value = value.replace(tzinfo=_UTC)
         return value
