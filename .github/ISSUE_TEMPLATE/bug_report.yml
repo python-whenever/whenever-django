@@ -1,0 +1,97 @@
+name: Bug Report
+description: Report a bug in whenever-django
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill out the sections below so we can reproduce and fix the issue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: Minimal code or steps to reproduce the behavior.
+      placeholder: |
+        from whenever import ZonedDateTime
+        from whenever_django.fields import ZonedDateTimeField
+
+        class MyModel(models.Model):
+            timestamp = ZonedDateTimeField()
+
+        # What you did...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened. Include tracebacks if applicable.
+    validations:
+      required: true
+
+  - type: input
+    id: whenever-django-version
+    attributes:
+      label: whenever-django version
+      placeholder: "0.0.1a0"
+    validations:
+      required: true
+
+  - type: input
+    id: whenever-version
+    attributes:
+      label: whenever version
+      placeholder: "0.10.0"
+    validations:
+      required: true
+
+  - type: input
+    id: django-version
+    attributes:
+      label: Django version
+      placeholder: "5.1"
+    validations:
+      required: true
+
+  - type: input
+    id: python-version
+    attributes:
+      label: Python version
+      placeholder: "3.12"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: database
+    attributes:
+      label: Database Backend
+      options:
+        - SQLite
+        - PostgreSQL
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other context (DRF version, OS, related issues, etc.).
