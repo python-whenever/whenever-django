@@ -1,7 +1,9 @@
 .PHONY: help init test lint format typecheck clean build ci-lint
 
 init:
-	pip install -e ".[dev]"
+	uv venv
+	source .venv/bin/activate
+	uv pip install -e ".[dev]"
 
 test:
 	pytest tests/

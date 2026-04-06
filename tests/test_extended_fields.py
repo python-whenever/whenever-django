@@ -7,6 +7,8 @@ from django.db import connection, models
 
 from whenever_django.fields import MonthDayField, YearMonthField
 
+pytestmark = pytest.mark.django_db(transaction=True)
+
 
 class ExtendedFieldModel(models.Model):
     year_month = YearMonthField(null=True)

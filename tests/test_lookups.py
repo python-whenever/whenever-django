@@ -18,6 +18,8 @@ from whenever_django.functions import WheneverNow
 
 UTC = stdlib_dt.timezone.utc
 
+pytestmark = pytest.mark.django_db(transaction=True)
+
 
 class LookupTestModel(models.Model):
     instant = InstantField(null=True)

@@ -17,6 +17,8 @@ from whenever_django.fields import (
 
 UTC = stdlib_dt.timezone.utc
 
+pytestmark = pytest.mark.django_db(transaction=True)
+
 
 # ---------------------------------------------------------------------------
 # Test models (created dynamically, no migration needed)

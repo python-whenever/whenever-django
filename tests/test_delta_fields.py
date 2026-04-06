@@ -13,6 +13,8 @@ from whenever_django.fields import (
     TimeDeltaField,
 )
 
+pytestmark = pytest.mark.django_db(transaction=True)
+
 # ---------------------------------------------------------------------------
 # Test model
 # ---------------------------------------------------------------------------

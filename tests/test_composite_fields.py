@@ -14,6 +14,8 @@ from whenever_django.fields import (
 
 UTC = stdlib_dt.timezone.utc
 
+pytestmark = pytest.mark.django_db(transaction=True)
+
 
 class CompositeFieldModel(models.Model):
     zoned = ZonedDateTimeField(null=True)
