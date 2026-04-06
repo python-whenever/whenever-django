@@ -1,0 +1,28 @@
+name: Tests and linting
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e ".[dev]"
+      - run: pytest tests/
+      - run: black --check src/ tests/
+      - run: isort --check-only src/ tests/
+      - run: flake8 src/ tests/
+      - run: mypy src/
+      - run: python -m build
+      - run: twine check dist/*

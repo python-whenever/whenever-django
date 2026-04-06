@@ -1,0 +1,84 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "whenever-django"
+version = "0.0.1a0"
+description = "Django integration for the Whenever datetime library"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Arie Bovenberg", email = "a.c.bovenberg@gmail.com"},
+]
+keywords = ["datetime", "date", "time", "timezone", "django"]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries",
+    "Framework :: Django",
+]
+dependencies = [
+    "whenever>=0.10.0",
+    "django>=3.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "pytest-django>=4.5",
+    "mypy>=1.0",
+    "types-setuptools",
+    "black>=23.0",
+    "isort>=5.0",
+    "flake8>=5.0",
+    "build>=0.10",
+    "twine>=4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/ariebovenberg/whenever-django"
+Documentation = "https://github.com/ariebovenberg/whenever-django"
+Repository = "https://github.com/ariebovenberg/whenever-django.git"
+Issues = "https://github.com/ariebovenberg/whenever-django/issues"
+
+[tool.setuptools.packages]
+find = {where = ["src"]}
+
+[tool.setuptools.package-data]
+whenever_django = ["py.typed"]
+
+[tool.black]
+line-length = 88
+target-version = ["py310"]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip_gitignore = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+addopts = "-v --strict-markers"
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_any_unimported = false
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disable_error_code = ["no-untyped-def"]
