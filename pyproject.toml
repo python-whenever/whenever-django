@@ -92,13 +92,14 @@ target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I", "UP", "B", "SIM"]
-ignore = ["SIM102"]
+ignore = []
 fixable = ["ALL"]
 unfixable = []
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/test_drf.py" = ["E402"]
+"tests/*" = ["B009"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
@@ -120,4 +121,5 @@ docstring-code-format = false
 [dependency-groups]
 dev = [
     "django-stubs>=6.0.2",
+    "djangorestframework>=3.17.1",
 ]

@@ -49,12 +49,16 @@ class PlainDateTimeField(WheneverField):
     def get_prep_value(self, value: Any) -> Any:
         if value is None:
             return None
-        if self.from_stdlib and isinstance(value, _stdlib.datetime):
-            if value.tzinfo is not None:
-                raise TypeError(
-                    "PlainDateTimeField does not accept aware datetimes. "
-                    "Pass a naive datetime or a whenever.PlainDateTime."
-                )
+        if (
+            self.from_stdlib
+            and isinstance(value, _stdlib.datetime)
+            and value.tzinfo is not None
+        ):
+            raise TypeError(
+                "PlainDateTimeField does not accept aware datetimes. "
+                "Pass a naive datetime or a whenever.PlainDateTime."
+            )
+
         return super().get_prep_value(value)
 
     def formfield(

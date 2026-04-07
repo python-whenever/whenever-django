@@ -120,8 +120,8 @@ FIELD_CASES = [
 ]
 
 
-def _id(case: tuple) -> str:
-    return case[0].__name__
+def _id(case: tuple[type, ...]) -> str:
+    return str(case[0].__name__)
 
 
 @pytest.mark.parametrize(

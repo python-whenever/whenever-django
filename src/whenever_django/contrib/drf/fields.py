@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import whenever
 from rest_framework import serializers
@@ -100,20 +100,22 @@ def register_field_mapping() -> None:
         ZonedDateTimeField,
     )
 
-    mapping: dict[type, type] = {
-        InstantField: InstantSerializerField,
-        PlainDateTimeField: PlainDateTimeSerializerField,
-        ZonedDateTimeField: ZonedDateTimeSerializerField,
-        OffsetDateTimeField: OffsetDateTimeSerializerField,
-        WheneverDateField: WheneverDateSerializerField,
-        WheneverTimeField: WheneverTimeSerializerField,
-        YearMonthField: YearMonthSerializerField,
-        MonthDayField: MonthDaySerializerField,
-        TimeDeltaField: TimeDeltaSerializerField,
-        ItemizedDeltaField: ItemizedDeltaSerializerField,
-        ItemizedDateDeltaField: ItemizedDateDeltaSerializerField,
-    }
-    ModelSerializer.serializer_field_mapping.update(mapping)
+    field_mapping = cast(dict[type, type], ModelSerializer.serializer_field_mapping)
+    field_mapping.update(
+        {
+            InstantField: InstantSerializerField,
+            PlainDateTimeField: PlainDateTimeSerializerField,
+            ZonedDateTimeField: ZonedDateTimeSerializerField,
+            OffsetDateTimeField: OffsetDateTimeSerializerField,
+            WheneverDateField: WheneverDateSerializerField,
+            WheneverTimeField: WheneverTimeSerializerField,
+            YearMonthField: YearMonthSerializerField,
+            MonthDayField: MonthDaySerializerField,
+            TimeDeltaField: TimeDeltaSerializerField,
+            ItemizedDeltaField: ItemizedDeltaSerializerField,
+            ItemizedDateDeltaField: ItemizedDateDeltaSerializerField,
+        }
+    )
 
 
 __all__ = [

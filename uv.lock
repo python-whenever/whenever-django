@@ -1275,6 +1275,7 @@ drf = [
 [package.dev-dependencies]
 dev = [
     { name = "django-stubs" },
+    { name = "djangorestframework" },
 ]
 
 [package.metadata]
@@ -1294,7 +1295,10 @@ requires-dist = [
 provides-extras = ["drf", "dev"]
 
 [package.metadata.requires-dev]
-dev = [{ name = "django-stubs", specifier = ">=6.0.2" }]
+dev = [
+    { name = "django-stubs", specifier = ">=6.0.2" },
+    { name = "djangorestframework", specifier = ">=3.17.1" },
+]
 
 [[package]]
 name = "zipp"

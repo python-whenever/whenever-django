@@ -63,7 +63,7 @@ class TestZonedDateTimeField:
         obj = CompositeFieldModel.objects.create(zoned=val)
         obj.refresh_from_db()
         # The paired column should be accessible on the instance
-        assert obj.zoned_tz == "Europe/London"
+        assert getattr(obj, "zoned_tz") == "Europe/London"
 
     def test_to_python_from_string(self):
         field = ZonedDateTimeField()
@@ -112,7 +112,7 @@ class TestOffsetDateTimeField:
         obj = CompositeFieldModel.objects.create(offset=val)
         obj.refresh_from_db()
         assert obj.offset == val
-        assert obj.offset_offset == "-05:30"
+        assert getattr(obj, "offset_offset") == "-05:30"
 
     def test_type_rejection(self):
         with pytest.raises(TypeError, match="OffsetDateTimeField expects"):
@@ -122,7 +122,7 @@ class TestOffsetDateTimeField:
         val = whenever.OffsetDateTime(2026, 4, 6, 10, 0, 0, offset=whenever.hours(-4))
         obj = CompositeFieldModel.objects.create(offset=val)
         obj.refresh_from_db()
-        assert obj.offset_offset == "-04:00"
+        assert getattr(obj, "offset_offset") == "-04:00"
 
     def test_to_python_from_string(self):
         field = OffsetDateTimeField()

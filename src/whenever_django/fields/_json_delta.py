@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from django.core.exceptions import ValidationError
 
 from ._base import WheneverField
+
+if TYPE_CHECKING:
+    import whenever
+
+    _ItemizedTypeClass = type[whenever.ItemizedDelta] | type[whenever.ItemizedDateDelta]
 
 
 class _JsonDeltaField(WheneverField):
@@ -15,6 +20,7 @@ class _JsonDeltaField(WheneverField):
     ``formfield``.
     """
 
+    whenever_type: _ItemizedTypeClass
     stdlib_type = None
     _allowed_keys: frozenset[str]
 
@@ -29,8 +35,7 @@ class _JsonDeltaField(WheneverField):
                 f"expected a dict with keys from "
                 f"{sorted(self._allowed_keys)}."
             )
-        constructor: Any = self.whenever_type
-        return constructor(**data)
+        return self.whenever_type(**data)
 
     def _to_db(self, value: Any) -> str:
         return json.dumps(dict(value))

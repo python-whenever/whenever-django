@@ -212,7 +212,9 @@ class TestWheneverNow:
             instant=whenever.Instant.parse_iso("2026-04-06T10:00:00Z")
         )
         row = LookupTestModel.objects.annotate(now=WheneverNow()).first()
-        assert isinstance(row.now, whenever.Instant)
+        assert row is not None
+        now = getattr(row, "now")
+        assert isinstance(now, whenever.Instant)
 
     def test_whenever_now_is_recent(self):
         """Sanity check: DB timestamp is within a reasonable window."""
@@ -220,5 +222,7 @@ class TestWheneverNow:
             instant=whenever.Instant.parse_iso("2026-04-06T10:00:00Z")
         )
         row = LookupTestModel.objects.annotate(now=WheneverNow()).first()
-        stdlib_now = row.now.to_stdlib()
+        assert row is not None
+        now = getattr(row, "now")
+        stdlib_now = now.to_stdlib()
         assert abs((stdlib_now - stdlib_dt.datetime.now(tz=UTC)).total_seconds()) < 5
