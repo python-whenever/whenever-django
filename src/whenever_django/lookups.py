@@ -24,7 +24,7 @@ class DateTransform(Transform):
         return WheneverDateField()
 
     def as_sql(
-        self, compiler: Any, connection: Any
+        self, compiler: Any, *_args: Any, **_kwargs: Any
     ) -> tuple[str, list[Any]]:
         lhs, params = compiler.compile(self.lhs)
         return f"DATE({lhs})", params
@@ -40,7 +40,7 @@ class TimeTransform(Transform):
         return WheneverTimeField()
 
     def as_sql(
-        self, compiler: Any, connection: Any
+        self, compiler: Any, *_args: Any, **_kwargs: Any
     ) -> tuple[str, list[Any]]:
         lhs, params = compiler.compile(self.lhs)
         return f"TIME({lhs})", params

@@ -1,4 +1,5 @@
 """Tests for ORM lookups, transforms, and database functions."""
+
 from __future__ import annotations
 
 import datetime as stdlib_dt
@@ -102,9 +103,7 @@ class TestComparisonLookups:
         obj_early = LookupTestModel.objects.create(date=d1)
         LookupTestModel.objects.create(date=d2)
 
-        result = LookupTestModel.objects.filter(
-            date__lt=whenever.Date(2026, 6, 1)
-        )
+        result = LookupTestModel.objects.filter(date__lt=whenever.Date(2026, 6, 1))
         assert list(result) == [obj_early]
 
     def test_year_month_gt(self):
@@ -124,9 +123,7 @@ class TestComparisonLookups:
         obj1 = LookupTestModel.objects.create(month_day=md1)
         LookupTestModel.objects.create(month_day=md2)
 
-        result = LookupTestModel.objects.filter(
-            month_day__lte=whenever.MonthDay(6, 1)
-        )
+        result = LookupTestModel.objects.filter(month_day__lte=whenever.MonthDay(6, 1))
         assert list(result) == [obj1]
 
 
@@ -140,9 +137,7 @@ class TestRangeLookup:
         obj_jun = LookupTestModel.objects.create(year_month=ym_jun)
         LookupTestModel.objects.create(year_month=ym_dec)
 
-        result = LookupTestModel.objects.filter(
-            year_month__range=(ym_jan, ym_jun)
-        )
+        result = LookupTestModel.objects.filter(year_month__range=(ym_jan, ym_jun))
         assert set(result) == {obj_jan, obj_jun}
 
     def test_instant_range(self):
@@ -158,9 +153,7 @@ class TestRangeLookup:
             instant=whenever.Instant.parse_iso("2026-12-01T00:00:00Z")
         )
 
-        result = LookupTestModel.objects.filter(
-            instant__range=(start, end)
-        )
+        result = LookupTestModel.objects.filter(instant__range=(start, end))
         assert list(result) == [obj_mid]
 
 
@@ -188,18 +181,14 @@ class TestDateTransform:
         val = whenever.Instant.parse_iso("2026-04-06T10:30:00Z")
         obj = LookupTestModel.objects.create(instant=val)
 
-        result = LookupTestModel.objects.filter(
-            instant__date=whenever.Date(2026, 4, 6)
-        )
+        result = LookupTestModel.objects.filter(instant__date=whenever.Date(2026, 4, 6))
         assert list(result) == [obj]
 
     def test_instant_date_transform_no_match(self):
         LookupTestModel.objects.create(
             instant=whenever.Instant.parse_iso("2026-04-06T10:30:00Z")
         )
-        result = LookupTestModel.objects.filter(
-            instant__date=whenever.Date(2026, 4, 7)
-        )
+        result = LookupTestModel.objects.filter(instant__date=whenever.Date(2026, 4, 7))
         assert not result.exists()
 
 
@@ -208,9 +197,7 @@ class TestTimeTransform:
         val = whenever.Instant.parse_iso("2026-04-06T10:30:00Z")
         obj = LookupTestModel.objects.create(instant=val)
 
-        result = LookupTestModel.objects.filter(
-            instant__time=whenever.Time(10, 30, 0)
-        )
+        result = LookupTestModel.objects.filter(instant__time=whenever.Time(10, 30, 0))
         assert list(result) == [obj]
 
 
@@ -224,9 +211,7 @@ class TestWheneverNow:
         LookupTestModel.objects.create(
             instant=whenever.Instant.parse_iso("2026-04-06T10:00:00Z")
         )
-        row = LookupTestModel.objects.annotate(
-            now=WheneverNow()
-        ).first()
+        row = LookupTestModel.objects.annotate(now=WheneverNow()).first()
         assert isinstance(row.now, whenever.Instant)
 
     def test_whenever_now_is_recent(self):
@@ -234,10 +219,6 @@ class TestWheneverNow:
         LookupTestModel.objects.create(
             instant=whenever.Instant.parse_iso("2026-04-06T10:00:00Z")
         )
-        row = LookupTestModel.objects.annotate(
-            now=WheneverNow()
-        ).first()
+        row = LookupTestModel.objects.annotate(now=WheneverNow()).first()
         stdlib_now = row.now.to_stdlib()
-        assert abs(
-            (stdlib_now - stdlib_dt.datetime.now(tz=UTC)).total_seconds()
-        ) < 5
+        assert abs((stdlib_now - stdlib_dt.datetime.now(tz=UTC)).total_seconds()) < 5

@@ -1,4 +1,5 @@
 """Tests for TimeDeltaField, ItemizedDeltaField, and ItemizedDateDeltaField."""
+
 from __future__ import annotations
 
 import datetime as stdlib_dt
@@ -58,9 +59,7 @@ class TestTimeDeltaField:
 
     def test_type_rejection(self):
         with pytest.raises(TypeError, match="TimeDeltaField expects TimeDelta"):
-            DeltaFieldModel.objects.create(
-                time_delta=stdlib_dt.timedelta(hours=2)
-            )
+            DeltaFieldModel.objects.create(time_delta=stdlib_dt.timedelta(hours=2))
 
     def test_to_python_from_string(self):
         field = TimeDeltaField()
@@ -111,9 +110,7 @@ class TestItemizedDeltaField:
 
     def test_type_rejection(self):
         with pytest.raises(TypeError, match="ItemizedDeltaField expects ItemizedDelta"):
-            DeltaFieldModel.objects.create(
-                itemized_delta=stdlib_dt.timedelta(hours=2)
-            )
+            DeltaFieldModel.objects.create(itemized_delta=stdlib_dt.timedelta(hours=2))
 
     def test_to_python_from_string(self):
         field = ItemizedDeltaField()
@@ -174,7 +171,9 @@ class TestItemizedDateDeltaField:
     def test_deconstruct(self):
         field = ItemizedDateDeltaField()
         _, path, _, kwargs = field.deconstruct()
-        assert path == "whenever_django.fields.itemized_date_delta.ItemizedDateDeltaField"
+        assert (
+            path == "whenever_django.fields.itemized_date_delta.ItemizedDateDeltaField"
+        )
         assert "from_stdlib" not in kwargs
 
     def test_from_stdlib_not_supported(self):

@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import datetime as _stdlib
 from collections.abc import Callable
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from django.core.exceptions import ValidationError
 from django.db import models
+
+if TYPE_CHECKING:
+    from django.db.models import Model
 
 from ..descriptors import CompositeFieldDescriptor
 from ._base import WheneverField
@@ -32,11 +35,11 @@ class _CompositeWheneverField(WheneverField):
         return "DateTimeField"
 
     def contribute_to_class(
-        self, cls: type, name: str, **kwargs: Any
+        self, cls: type[Model], name: str, private_only: bool = False
     ) -> None:
-        super().contribute_to_class(cls, name, **kwargs)
+        super().contribute_to_class(cls, name, private_only=private_only)
 
-        paired_field = models.CharField(
+        paired_field: models.CharField[str, str] = models.CharField(
             max_length=self.paired_max_length,
             null=self.null,
             blank=self.blank,
@@ -54,16 +57,17 @@ class _CompositeWheneverField(WheneverField):
         )
         setattr(cls, self.name, descriptor)
 
-    def _from_db(
-        self, value: Any, connection: Any
-    ) -> _stdlib.datetime:
-        if not isinstance(value, _stdlib.datetime):
-            value = _stdlib.datetime.fromisoformat(str(value))
+    def _from_db(self, value: Any, connection: Any) -> _stdlib.datetime:
+        dt: _stdlib.datetime
+        if isinstance(value, _stdlib.datetime):
+            dt = value
+        else:
+            dt = _stdlib.datetime.fromisoformat(str(value))
         # The column stores UTC. SQLite and some backends return naive
         # datetimes — restoring UTC is safe because only UTC is ever stored.
-        if value.tzinfo is None:
-            value = value.replace(tzinfo=_UTC)
-        return value
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=_UTC)
+        return dt
 
     def get_prep_value(self, value: Any) -> Any:
         if value is None:
@@ -105,8 +109,7 @@ class _CompositeWheneverField(WheneverField):
                     f"Invalid value for {self.__class__.__name__}: {e}"
                 ) from e
         raise ValidationError(
-            f"Cannot convert {type(value).__name__} to "
-            f"{self.whenever_type.__name__}."
+            f"Cannot convert {type(value).__name__} to {self.whenever_type.__name__}."
         )
 
     def value_to_string(self, obj: Any) -> str:

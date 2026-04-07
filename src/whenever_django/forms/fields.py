@@ -6,6 +6,8 @@ import whenever
 from django import forms
 from django.core.exceptions import ValidationError
 
+from whenever_django.types import WheneverTypeClass
+
 
 class _WheneverFormField(forms.CharField):
     """Base form field that converts ISO 8601 strings to whenever types.
@@ -14,27 +16,30 @@ class _WheneverFormField(forms.CharField):
     and error messages.
     """
 
-    whenever_type: type = None  # type: ignore[assignment]
+    whenever_type: WheneverTypeClass
     type_label: str = "value"
 
     def to_python(self, value: Any) -> Any:
         if not value:
             return None
+
         if isinstance(value, self.whenever_type):
             return value
+
         try:
             return self.whenever_type.parse_iso(str(value))
+
         except (ValueError, TypeError) as e:
-            raise ValidationError(
-                f"Enter a valid ISO 8601 {self.type_label}."
-            ) from e
+            raise ValidationError(f"Enter a valid ISO 8601 {self.type_label}.") from e
 
     def prepare_value(self, value: Any) -> str:
         if value is None:
             return ""
+
         if isinstance(value, self.whenever_type):
             return str(value)
-        return super().prepare_value(value)
+
+        return str(super().prepare_value(value))
 
 
 class InstantFormField(_WheneverFormField):

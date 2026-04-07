@@ -1,4 +1,5 @@
 """Tests for DRF serializer fields."""
+
 from __future__ import annotations
 
 import pytest
@@ -128,6 +129,5 @@ def test_register_serializer_fields():
 
     assert InstantField in ModelSerializer.serializer_field_mapping
     assert (
-        ModelSerializer.serializer_field_mapping[InstantField]
-        is InstantSerializerField
+        ModelSerializer.serializer_field_mapping[InstantField] is InstantSerializerField
     )

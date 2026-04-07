@@ -29,7 +29,8 @@ class _JsonDeltaField(WheneverField):
                 f"expected a dict with keys from "
                 f"{sorted(self._allowed_keys)}."
             )
-        return self.whenever_type(**data)
+        constructor: Any = self.whenever_type
+        return constructor(**data)
 
     def _to_db(self, value: Any) -> str:
         return json.dumps(dict(value))

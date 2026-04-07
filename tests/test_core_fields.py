@@ -1,4 +1,5 @@
 """Tests for the four core whenever model fields."""
+
 from __future__ import annotations
 
 import datetime as stdlib_dt
@@ -153,9 +154,7 @@ class TestPlainDateTimeField:
 
     def test_type_rejection(self):
         with pytest.raises(TypeError, match="PlainDateTimeField expects"):
-            CoreFieldModel.objects.create(
-                plain_dt=stdlib_dt.datetime(2026, 4, 6)
-            )
+            CoreFieldModel.objects.create(plain_dt=stdlib_dt.datetime(2026, 4, 6))
 
     def test_from_stdlib_coercion_naive(self):
         stdlib_val = stdlib_dt.datetime(2026, 4, 6, 10, 30, 0)
@@ -198,9 +197,7 @@ class TestWheneverDateField:
 
     def test_type_rejection(self):
         with pytest.raises(TypeError, match="WheneverDateField expects"):
-            CoreFieldModel.objects.create(
-                date=stdlib_dt.date(2026, 4, 6)
-            )
+            CoreFieldModel.objects.create(date=stdlib_dt.date(2026, 4, 6))
 
     def test_from_stdlib_coercion(self):
         stdlib_val = stdlib_dt.date(2026, 4, 6)
@@ -239,9 +236,7 @@ class TestWheneverTimeField:
 
     def test_type_rejection(self):
         with pytest.raises(TypeError, match="WheneverTimeField expects"):
-            CoreFieldModel.objects.create(
-                time=stdlib_dt.time(10, 30, 45)
-            )
+            CoreFieldModel.objects.create(time=stdlib_dt.time(10, 30, 45))
 
     def test_from_stdlib_coercion(self):
         stdlib_val = stdlib_dt.time(10, 30, 45)

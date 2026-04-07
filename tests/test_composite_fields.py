@@ -1,4 +1,5 @@
 """Tests for the composite fields: ZonedDateTime and OffsetDateTime."""
+
 from __future__ import annotations
 
 import datetime as stdlib_dt
@@ -7,10 +8,7 @@ import pytest
 import whenever
 from django.db import connection, models
 
-from whenever_django.fields import (
-    OffsetDateTimeField,
-    ZonedDateTimeField,
-)
+from whenever_django.fields import OffsetDateTimeField, ZonedDateTimeField
 
 UTC = stdlib_dt.timezone.utc
 
@@ -58,9 +56,7 @@ class TestZonedDateTimeField:
 
     def test_type_rejection(self):
         with pytest.raises(TypeError, match="ZonedDateTimeField expects"):
-            CompositeFieldModel.objects.create(
-                zoned="not-a-zoned-datetime"
-            )
+            CompositeFieldModel.objects.create(zoned="not-a-zoned-datetime")
 
     def test_paired_column_exists(self):
         val = whenever.ZonedDateTime(2026, 4, 6, 10, 0, 0, tz="Europe/London")
@@ -71,9 +67,7 @@ class TestZonedDateTimeField:
 
     def test_to_python_from_string(self):
         field = ZonedDateTimeField()
-        result = field.to_python(
-            "2026-04-06T10:00:00-04:00[America/New_York]"
-        )
+        result = field.to_python("2026-04-06T10:00:00-04:00[America/New_York]")
         assert isinstance(result, whenever.ZonedDateTime)
 
     def test_to_python_none(self):
@@ -93,25 +87,26 @@ class TestOffsetDateTimeField:
         assert obj.offset is None
 
     def test_basic_roundtrip(self):
-        val = whenever.OffsetDateTime(
-            2026, 4, 6, 10, 0, 0, offset=whenever.hours(-4)
-        )
+        val = whenever.OffsetDateTime(2026, 4, 6, 10, 0, 0, offset=whenever.hours(-4))
         obj = CompositeFieldModel.objects.create(offset=val)
         obj.refresh_from_db()
         assert isinstance(obj.offset, whenever.OffsetDateTime)
         assert obj.offset == val
 
     def test_offset_preserved(self):
-        val = whenever.OffsetDateTime(
-            2026, 4, 6, 10, 0, 0, offset=whenever.hours(9)
-        )
+        val = whenever.OffsetDateTime(2026, 4, 6, 10, 0, 0, offset=whenever.hours(9))
         obj = CompositeFieldModel.objects.create(offset=val)
         obj.refresh_from_db()
         assert obj.offset.offset == whenever.hours(9)
 
     def test_negative_offset(self):
         val = whenever.OffsetDateTime(
-            2026, 4, 6, 10, 0, 0,
+            2026,
+            4,
+            6,
+            10,
+            0,
+            0,
             offset=whenever.hours(-5) + whenever.minutes(-30),
         )
         obj = CompositeFieldModel.objects.create(offset=val)
@@ -121,14 +116,10 @@ class TestOffsetDateTimeField:
 
     def test_type_rejection(self):
         with pytest.raises(TypeError, match="OffsetDateTimeField expects"):
-            CompositeFieldModel.objects.create(
-                offset="not-an-offset-datetime"
-            )
+            CompositeFieldModel.objects.create(offset="not-an-offset-datetime")
 
     def test_paired_column_exists(self):
-        val = whenever.OffsetDateTime(
-            2026, 4, 6, 10, 0, 0, offset=whenever.hours(-4)
-        )
+        val = whenever.OffsetDateTime(2026, 4, 6, 10, 0, 0, offset=whenever.hours(-4))
         obj = CompositeFieldModel.objects.create(offset=val)
         obj.refresh_from_db()
         assert obj.offset_offset == "-04:00"

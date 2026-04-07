@@ -1,4 +1,5 @@
 """Tests for the whenever_audit management command."""
+
 from __future__ import annotations
 
 from io import StringIO

@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import datetime as _stdlib
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from django import forms as _django_forms
 
 import whenever as _whenever
 
@@ -46,9 +49,16 @@ class ZonedDateTimeField(_CompositeWheneverField):
     def _parse(self, value: str) -> _whenever.ZonedDateTime:
         return _whenever.ZonedDateTime.parse_iso(value)
 
-    def formfield(self, **kwargs: Any) -> Any:
+    def formfield(
+        self,
+        form_class: type[_django_forms.Field] | None = None,
+        choices_form_class: type[_django_forms.ChoiceField] | None = None,
+        **kwargs: Any,
+    ) -> _django_forms.Field | None:
         from ..forms.fields import ZonedDateTimeFormField
 
-        defaults = {"form_class": ZonedDateTimeFormField}
-        defaults.update(kwargs)
-        return super().formfield(**defaults)
+        return super().formfield(
+            form_class=form_class or ZonedDateTimeFormField,
+            choices_form_class=choices_form_class,
+            **kwargs,
+        )

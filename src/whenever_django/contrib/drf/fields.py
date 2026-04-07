@@ -5,6 +5,8 @@ from typing import Any
 import whenever
 from rest_framework import serializers
 
+from whenever_django.types import WheneverTypeClass
+
 
 class _WheneverSerializerField(serializers.Field):
     """Base for all whenever serializer fields.
@@ -14,7 +16,7 @@ class _WheneverSerializerField(serializers.Field):
     round-trip by convention.
     """
 
-    whenever_type: type
+    whenever_type: WheneverTypeClass
 
     def to_representation(self, value: Any) -> str | None:
         if value is None:

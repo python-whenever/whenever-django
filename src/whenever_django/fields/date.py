@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import datetime as _stdlib
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from django import forms as _django_forms
 
 import whenever as _whenever
 
@@ -28,9 +31,16 @@ class WheneverDateField(WheneverField):
     def _parse(self, value: str) -> _whenever.Date:
         return _whenever.Date.parse_iso(value)
 
-    def formfield(self, **kwargs: Any) -> Any:
+    def formfield(
+        self,
+        form_class: type[_django_forms.Field] | None = None,
+        choices_form_class: type[_django_forms.ChoiceField] | None = None,
+        **kwargs: Any,
+    ) -> _django_forms.Field | None:
         from ..forms.fields import WheneverDateFormField
 
-        defaults = {"form_class": WheneverDateFormField}
-        defaults.update(kwargs)
-        return super().formfield(**defaults)
+        return super().formfield(
+            form_class=form_class or WheneverDateFormField,
+            choices_form_class=choices_form_class,
+            **kwargs,
+        )

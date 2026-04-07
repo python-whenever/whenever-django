@@ -6,6 +6,8 @@ from typing import Any
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from whenever_django.types import WheneverTypeClass
+
 
 class WheneverField(models.Field, abc.ABC):
     """Base class for all whenever model fields.
@@ -18,12 +20,10 @@ class WheneverField(models.Field, abc.ABC):
       - _parse(value): parse a string/form value into the whenever type
     """
 
-    whenever_type: type = None  # type: ignore[assignment]
+    whenever_type: WheneverTypeClass
     stdlib_type: type | None = None
 
-    def __init__(
-        self, *args: Any, from_stdlib: bool = False, **kwargs: Any
-    ) -> None:
+    def __init__(self, *args: Any, from_stdlib: bool = False, **kwargs: Any) -> None:
         if from_stdlib and self.stdlib_type is None:
             raise TypeError(
                 f"{self.__class__.__name__} does not support from_stdlib=True "
@@ -32,7 +32,7 @@ class WheneverField(models.Field, abc.ABC):
         self.from_stdlib = from_stdlib
         super().__init__(*args, **kwargs)
 
-    def deconstruct(self) -> tuple[str, str, list[Any], dict[str, Any]]:
+    def deconstruct(self) -> tuple[str, str, Any, dict[str, Any]]:
         name, path, args, kwargs = super().deconstruct()
         if self.from_stdlib:
             kwargs["from_stdlib"] = True
@@ -60,15 +60,15 @@ class WheneverField(models.Field, abc.ABC):
                 ) from e
         if self.stdlib_type and isinstance(value, self.stdlib_type):
             try:
-                return self.whenever_type(value)
+                stdlib_val: Any = value
+                return self.whenever_type(stdlib_val)
             except (ValueError, TypeError) as e:
                 raise ValidationError(
                     f"Cannot convert {self.stdlib_type.__name__} to "
                     f"{self.whenever_type.__name__}: {e}"
                 ) from e
         raise ValidationError(
-            f"Cannot convert {type(value).__name__} to "
-            f"{self.whenever_type.__name__}."
+            f"Cannot convert {type(value).__name__} to {self.whenever_type.__name__}."
         )
 
     def get_prep_value(self, value: Any) -> Any:
@@ -76,10 +76,13 @@ class WheneverField(models.Field, abc.ABC):
             return None
         if isinstance(value, self.whenever_type):
             return self._to_db(value)
-        if self.from_stdlib and self.stdlib_type and isinstance(
-            value, self.stdlib_type
+        if (
+            self.from_stdlib
+            and self.stdlib_type
+            and isinstance(value, self.stdlib_type)
         ):
-            return self._to_db(self.whenever_type(value))
+            stdlib_val: Any = value
+            return self._to_db(self.whenever_type(stdlib_val))
         raise TypeError(
             f"{self.__class__.__name__} expects "
             f"{self.whenever_type.__name__}, "

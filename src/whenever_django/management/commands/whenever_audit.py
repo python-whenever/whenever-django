@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import argparse
+
 from django.apps import apps
 from django.core.management.base import BaseCommand
 
@@ -14,46 +16,58 @@ class Command(BaseCommand):
         "DurationField": "TimeDeltaField",
     }
 
-    def add_arguments(self, parser: object) -> None:
-        parser.add_argument(  # type: ignore[attr-defined]
+    def add_arguments(self, parser: argparse.ArgumentParser) -> None:
+        parser.add_argument(
             "--app-label",
             type=str,
             help="Limit scan to a specific app label.",
         )
 
     def handle(self, *args: object, **options: object) -> None:
-        app_label: str | None = options.get("app_label")  # type: ignore[assignment]
+        app_label = str(options.get("app_label", ""))
 
         if app_label:
             try:
                 app_config = apps.get_app_config(app_label)
-                models_to_scan = app_config.get_models()
+                models_to_scan = list(app_config.get_models())
+
             except LookupError:
                 self.stderr.write(f"App '{app_label}' not found.")
                 return
+
         else:
-            models_to_scan = apps.get_models()
+            models_to_scan = list(apps.get_models())
 
         findings: list[dict[str, str]] = []
+
         for model in models_to_scan:
             for field in model._meta.get_fields():
                 field_type = type(field).__name__
+
                 if field_type in self.FIELD_MAPPING:
-                    findings.append({
-                        "app": model._meta.app_label,
-                        "model": model.__name__,
-                        "field": field.name,
-                        "current_type": field_type,
-                        "recommended": self.FIELD_MAPPING[field_type],
-                    })
+                    findings.append(
+                        {
+                            "app": model._meta.app_label,
+                            "model": model.__name__,
+                            "field": field.name,
+                            "current_type": field_type,
+                            "recommended": self.FIELD_MAPPING[field_type],
+                        }
+                    )
 
         if not findings:
             self.stdout.write(
-                self.style.SUCCESS("No stdlib datetime fields found. Nothing to convert.")
+                self.style.SUCCESS(
+                    "No stdlib datetime fields found. Nothing to convert."
+                )
             )
+
             return
 
-        self.stdout.write(self.style.MIGRATE_HEADING("\nwhenever-django Migration Audit Report"))
+        self.stdout.write(
+            self.style.MIGRATE_HEADING("\nwhenever-django Migration Audit Report")
+        )
+
         self.stdout.write(self.style.MIGRATE_HEADING("=" * 50))
 
         for f in findings:

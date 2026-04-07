@@ -61,14 +61,31 @@ whenever_django = ["py.typed"]
 
 [tool.mypy]
 python_version = "3.10"
+plugins = ["mypy_django_plugin.main"]
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 disallow_any_unimported = false
 
+[tool.django-stubs]
+django_settings_module = "tests.settings"
+
 [[tool.mypy.overrides]]
 module = "tests.*"
 disable_error_code = ["no-untyped-def"]
+
+[[tool.mypy.overrides]]
+module = "rest_framework.*"
+ignore_missing_imports = true
+
+[tool.black]
+target-version = ["py310"]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+py_version = "310"
+line_length = 88
 
 [tool.ruff]
 target-version = "py310"
@@ -83,6 +100,12 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 [tool.ruff.lint.per-file-ignores]
 "tests/test_drf.py" = ["E402"]
 
+[tool.pytest.ini_options]
+minversion = "7.0"
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
 [tool.ruff.format]
 quote-style = "double"
 
@@ -93,3 +116,8 @@ skip-magic-trailing-comma = false
 line-ending = "auto"
 
 docstring-code-format = false
+
+[dependency-groups]
+dev = [
+    "django-stubs>=6.0.2",
+]

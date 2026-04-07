@@ -1,4 +1,5 @@
 """Tests for YearMonth and MonthDay fields."""
+
 from __future__ import annotations
 
 import pytest

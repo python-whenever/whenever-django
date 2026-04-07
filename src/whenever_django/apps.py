@@ -17,4 +17,5 @@ class WheneverDjangoConfig(AppConfig):
 
             register_field_mapping()
         except ImportError:
+            # DRF not installed
             pass
