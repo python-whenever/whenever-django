@@ -22,6 +22,7 @@ jobs:
       - run: pytest tests/
       - run: black --check src/ tests/
       - run: isort --check-only src/ tests/
+      - run: ruff --check src/ tests/
       - run: flake8 src/ tests/
       - run: mypy src/
       - run: python -m build

@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = {text = "MIT"}
 authors = [
-    {name = "Arie Bovenberg", email = "a.c.bovenberg@gmail.com"},
+    {name = "Gabriel Mitelman Tkacz", email = "gabriel@tkacz.dev.br"},
 ]
 keywords = ["datetime", "date", "time", "timezone", "django"]
 classifiers = [
@@ -29,28 +29,29 @@ classifiers = [
 ]
 dependencies = [
     "whenever>=0.10.0",
-    "django>=3.2",
+    "django>=4.2",
 ]
 
 [project.optional-dependencies]
+drf = [
+    "djangorestframework>=3.14",
+]
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
     "pytest-django>=4.5",
     "mypy>=1.0",
     "types-setuptools",
-    "black>=23.0",
-    "isort>=5.0",
-    "flake8>=5.0",
+    "ruff>=0.4",
     "build>=0.10",
     "twine>=4.0",
 ]
 
 [project.urls]
-Homepage = "https://github.com/ariebovenberg/whenever-django"
-Documentation = "https://github.com/ariebovenberg/whenever-django"
-Repository = "https://github.com/ariebovenberg/whenever-django.git"
-Issues = "https://github.com/ariebovenberg/whenever-django/issues"
+Homepage = "https://github.com/python-whenever/whenever-django"
+Documentation = "https://github.com/python-whenever/whenever-django"
+Repository = "https://github.com/python-whenever/whenever-django.git"
+Issues = "https://github.com/python-whenever/whenever-django/issues"
 
 [tool.setuptools.packages]
 find = {where = ["src"]}
@@ -58,27 +59,67 @@ find = {where = ["src"]}
 [tool.setuptools.package-data]
 whenever_django = ["py.typed"]
 
-[tool.black]
-line-length = 88
-target-version = ["py310"]
-
-[tool.isort]
-profile = "black"
-line_length = 88
-skip_gitignore = true
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-python_files = "test_*.py"
-addopts = "-v --strict-markers"
-
 [tool.mypy]
 python_version = "3.10"
+plugins = ["mypy_django_plugin.main"]
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 disallow_any_unimported = false
 
+[tool.django-stubs]
+django_settings_module = "tests.settings"
+
 [[tool.mypy.overrides]]
 module = "tests.*"
 disable_error_code = ["no-untyped-def"]
+
+[[tool.mypy.overrides]]
+module = "rest_framework.*"
+ignore_missing_imports = true
+
+[tool.black]
+target-version = ["py310"]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+py_version = "310"
+line_length = 88
+
+[tool.ruff]
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B", "SIM"]
+ignore = []
+fixable = ["ALL"]
+unfixable = []
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/test_drf.py" = ["E402"]
+"tests/*" = ["B009"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+indent-style = "space"
+
+skip-magic-trailing-comma = false
+
+line-ending = "auto"
+
+docstring-code-format = false
+
+[dependency-groups]
+dev = [
+    "django-stubs>=6.0.2",
+    "djangorestframework>=3.17.1",
+]
